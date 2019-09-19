@@ -1,5 +1,6 @@
 package com.ericksilva.smart2048
 
+import android.util.Log
 import java.util.Random
 
 /**
@@ -29,6 +30,8 @@ class GameLogic (var board: BoardGame) {
 
     fun move(direction:Direction){
 
+        val oldMatrix = mMatrix
+
         when (direction){
             Direction.UP -> moveUp()
             Direction.DOWN -> moveDown()
@@ -36,7 +39,12 @@ class GameLogic (var board: BoardGame) {
             Direction.RIGHT -> moveRight()
         }
 
-        addNewValue()
+        if (!matrixCompare(oldMatrix,mMatrix)) {
+            addNewValue()
+            if (isGameOver()){
+                board.gameOver()
+            }
+        }
 
         board.populate(mMatrix)
     }
@@ -217,7 +225,48 @@ class GameLogic (var board: BoardGame) {
         mMatrix = resultMatrix
     }
 
-    fun getCleanMatrix() : Array<IntArray>{
+    private fun isGameOver() : Boolean {
+
+        for (i in 0..mMatrix.lastIndex){
+            for (j in 0..mMatrix.lastIndex){
+                if (mMatrix[i][j] == 0){ //Si hay lugar vacio se puede seguir jugando
+                    return false
+                }
+            }
+        }
+
+        for (i in 0..mMatrix.lastIndex){
+            for (j in 0..mMatrix.lastIndex){
+                val value = mMatrix[i][j]
+                if (mMatrix[i].lastIndex != j) {
+                    val nextValue = mMatrix[i][j + 1]
+                    if (value == nextValue) return false //Si hay numeros iguales juntos se puede seguir jugando
+                }
+
+                if (mMatrix.lastIndex != i) {
+                    val nextValue = mMatrix[i+1][j]
+                    if (value == nextValue) return false //Si hay numeros iguales juntos se puede seguir jugando
+                }
+
+            }
+        }
+
+        return true
+    }
+
+    private fun matrixCompare(m:Array<IntArray>, n:Array<IntArray>) : Boolean {
+        for (i in 0..m.lastIndex){
+            val x = m[i]
+            for (j in 0..x.lastIndex){
+                if (x[j] != n[i][j] ) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    private fun getCleanMatrix() : Array<IntArray>{
 
         var matrix = Array(4, {IntArray(4)})
         for (i:Int in 0..3){
@@ -263,6 +312,7 @@ class GameLogic (var board: BoardGame) {
 
     interface BoardGame{
         fun populate(matrix:Array<IntArray>)
+        fun gameOver()
     }
 
 }

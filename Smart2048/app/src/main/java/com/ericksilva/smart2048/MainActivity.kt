@@ -3,6 +3,7 @@ package com.ericksilva.smart2048
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), GameLogic.BoardGame {
@@ -60,6 +61,10 @@ class MainActivity : AppCompatActivity(), GameLogic.BoardGame {
         lblNum42.text = formatedString(matrix.get(3).get(1))
         lblNum43.text = formatedString(matrix.get(3).get(2))
         lblNum44.text = formatedString(matrix.get(3).get(3))
+    }
+
+    override fun gameOver() {
+        Toast.makeText(this,"GAME OVER!",Toast.LENGTH_LONG).show()
     }
 
     fun formatedString(value:Int):String{
